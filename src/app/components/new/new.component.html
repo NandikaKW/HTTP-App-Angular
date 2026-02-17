@@ -1,0 +1,48 @@
+<form [formGroup]="form" (ngSubmit)="createData()">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+
+        <div class="card shadow p-4">
+
+          <h3 class="text-center mb-4">Create Post</h3>
+
+          <!-- ID -->
+          <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>ID</mat-label>
+            <input formControlName="id" matInput type="number" placeholder="Ex. 1">
+          </mat-form-field>
+
+          <!-- User ID -->
+          <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>User ID</mat-label>
+            <input formControlName="userId" matInput type="number" placeholder="Ex. 1001">
+          </mat-form-field>
+
+          <!-- Title -->
+          <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Title</mat-label>
+            <input formControlName="title" matInput placeholder="Enter title">
+          </mat-form-field>
+
+          <!-- Body -->
+          <mat-form-field appearance="outline" class="w-100 mb-4">
+            <mat-label>Body</mat-label>
+            <textarea formControlName="body" matInput rows="4" placeholder="Enter body"></textarea>
+          </mat-form-field>
+
+          <!-- Button -->
+          <div class="text-center">
+            <button 
+            [disabled]="form.invalid"
+              mat-raised-button color="primary" type="submit">
+              Save Data
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,30 @@
+<mat-form-field class="example-full-width" appearance="outline" style="width: 100%;">
+  <mat-label>Post ID</mat-label>
+  <input matInput placeholder="Enter post id here" [(ngModel)]="searchid"
+  (keyup.enter)="loadData()"
+  >
+</mat-form-field>
+
+<hr>
+
+<table class="table table-hover">
+
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User ID</th>
+      <th>Title</th>
+      <th>Body</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let tempData of list">
+      <td>{{ tempData.id }}</td>
+      <td>{{ tempData.userId }}</td>
+      <td>{{ tempData.title }}</td>
+      <td>{{ tempData.body }}</td>
+    </tr>
+  </tbody>
+
+</table>
