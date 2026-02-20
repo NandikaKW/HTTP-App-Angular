@@ -1,34 +1,65 @@
-<div class="nav-container">
+<mat-toolbar class="main-navbar">
+  <div class="nav-container">
+    <!-- Logo Area -->
+    <div class="logo-area" routerLink="/">
+      <div class="logo-icon">
+        <mat-icon>http</mat-icon>
+      </div>
+      <span class="logo-text">HTTP<span class="accent">.app</span></span>
+    </div>
 
-  <button mat-raised-button color="primary" routerLink="/all">
-    <mat-icon>article</mat-icon>
-    All Posts
-  </button>
+    <!-- Navigation Links -->
+    <div class="nav-links">
+      <button mat-button routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>home</mat-icon>
+        <span class="nav-label">Home</span>
+      </button>
 
-  <button mat-raised-button color="accent" routerLink="/new">
-    <mat-icon>add_circle</mat-icon>
-    New Post
-  </button>
+      <button mat-button routerLink="/all" routerLinkActive="active-link">
+        <mat-icon>article</mat-icon>
+        <span class="nav-label">All Posts</span>
+      </button>
 
-  <button mat-raised-button color="primary" routerLink="/update">
-    <mat-icon>edit</mat-icon>
-    Update Post
-  </button>
+      <button mat-button routerLink="/new" routerLinkActive="active-link">
+        <mat-icon>add_circle</mat-icon>
+        <span class="nav-label">New Post</span>
+      </button>
 
-  <button mat-raised-button color="warn" routerLink="/delete">
-    <mat-icon>delete</mat-icon>
-    Delete Post
-  </button>
+      <button mat-button routerLink="/find" routerLinkActive="active-link">
+        <mat-icon>search</mat-icon>
+        <span class="nav-label">Find Post</span>
+      </button>
 
-  <button mat-raised-button color="warn" routerLink="/find">
-    <mat-icon>search</mat-icon>
-    Find Post
-  </button>
+      <button mat-button routerLink="/update" routerLinkActive="active-link">
+        <mat-icon>edit</mat-icon>
+        <span class="nav-label">Update Post</span>
+      </button>
 
-</div>
+      <button mat-button routerLink="/delete" routerLinkActive="active-link">
+        <mat-icon>delete</mat-icon>
+        <span class="nav-label">Delete Post</span>
+      </button>
+    </div>
 
-<div class="content">
+    <!-- Right Side Actions -->
+    <div class="nav-actions">
+      <span class="version-badge">
+        <mat-icon>bolt</mat-icon>
+        <span>v2.0</span>
+      </span>
+      
+      <button mat-icon-button class="notification-btn">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+      
+      <button mat-icon-button class="profile-btn">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Content Area -->
+<div class="content-wrapper">
   <router-outlet></router-outlet>
 </div>
-
-<!-- Day 5 time 2:28  -->

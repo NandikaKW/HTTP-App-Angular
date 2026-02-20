@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP App · modern dashboard</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   
+</head>
+<body>
+    <div class="home-container">
+  <!-- Hero Section with Background Image (Silver Harvest Style) -->
+  <div class="hero-wrapper">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tag">
+        <i class="fas fa-bolt"></i>
+        <span>real‑time http management</span>
+      </div>
+      
+      <h1 class="hero-title">Streamline <span>posts & data</span> with elegance</h1>
+      
+      <p class="hero-description">
+        Create, read, update, delete, and search posts effortlessly. 
+        Built for developers who love clean UX.
+      </p>
+      
+      <div class="hero-actions">
+        <button mat-raised-button class="btn-primary-modern" (click)="navigateTo('/all')">
+          <mat-icon>article</mat-icon> View all posts
+        </button>
+        <button mat-stroked-button class="btn-outline-light-modern" (click)="navigateTo('/new')">
+          <mat-icon>add_circle</mat-icon> Create new
+        </button>
+      </div>
+      
+      <!-- Quick stats for credibility -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">1.2k+</span>
+          <span class="stat-label">posts managed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">99%</span>
+          <span class="stat-label">uptime</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15ms</span>
+          <span class="stat-label">response</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section (3 Cards) -->
+  <div class="features-grid">
+    <div class="feature-card-modern">
+      <div class="card-icon">
+        <mat-icon>search</mat-icon>
+      </div>
+      <h3>Find instantly</h3>
+      <p>Quickly find any post by ID, title, or user with smart search.</p>
+      <a class="card-link" (click)="navigateTo('/find')">
+        discover <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    
+    <div class="feature-card-modern">
+      <div class="card-icon">
+        <mat-icon>edit_note</mat-icon>
+      </div>
+      <h3>Update smoothly</h3>
+      <p>Edit existing posts with user-friendly forms and real-time preview.</p>
+      <a class="card-link" (click)="navigateTo('/update')">
+        try now <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    
+    <div class="feature-card-modern">
+      <div class="card-icon">
+        <mat-icon>backup</mat-icon>
+      </div>
+      <h3>Safe delete</h3>
+      <p>Remove posts with confirmation, undo support, and instant feedback.</p>
+      <a class="card-link" (click)="navigateTo('/delete')">
+        explore <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Video/Insight Panel (Fixed Video) -->
+  <div class="insight-panel">
+    <div class="insight-text">
+      <span class="insight-badge">
+        <i class="far fa-star"></i> featured workflow
+      </span>
+      <h2>Designed for <span class="text-primary">API‑first</span> teams</h2>
+      <p>
+        Every post operation is logged, reversible, and beautifully animated. 
+        Whether you're debugging or building a blog, this panel adapts to you.
+      </p>
+      <div class="insight-stats">
+        <span class="insight-stat"><i class="far fa-clock"></i> instant sync</span>
+        <span class="insight-stat"><i class="far fa-keyboard"></i> shortcuts</span>
+      </div>
+    </div>
+    
+    <div class="insight-media" (click)="playVideo()">
+      <div class="play-mini" *ngIf="!isVideoPlaying">
+        <i class="fas fa-play"></i>
+      </div>
+      <iframe 
+        *ngIf="isVideoPlaying" 
+        [src]="videoUrl" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <!-- Quick Action Bar -->
+  <div class="quick-bar">
+    <span class="quick-item">
+      <i class="far fa-pen-to-square"></i> 23 posts today
+    </span>
+    <span class="quick-item" (click)="navigateTo('/all')">
+      <i class="far fa-bookmark"></i> all posts
+    </span>
+    <span class="quick-item" (click)="navigateTo('/new')">
+      <i class="far fa-plus"></i> quick create
+    </span>
+  </div>
+
+  <!-- Mini Footer -->
+  <div class="footer-mini">
+    <span>© 2025 HTTP App · </span>
+    <a href="#">privacy</a> · <a href="#">terms</a> · 
+    <span>crafted with <i class="far fa-heart" style="color:#96c181;"></i> for devs</span>
+    <span style="display:block; margin-top: 1rem; font-size:0.8rem;">
+      ⚡ real‑time post management · inspired by modern ui
+    </span>
+  </div>
+</div>
+</body>
+</html>

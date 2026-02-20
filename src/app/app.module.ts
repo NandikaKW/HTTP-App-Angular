@@ -16,6 +16,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HomeComponent } from './components/home/home.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,7 +25,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     NewComponent,
     FindComponent,
     UpdateComponent,
-    DeleteComponent
+    DeleteComponent,
+    HomeComponent
     
   ],
   imports: [
@@ -37,7 +40,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule
 
   ],
   providers: [],

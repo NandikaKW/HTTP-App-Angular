@@ -5,8 +5,10 @@ import { FindComponent } from './components/find/find.component';
 import { NewComponent } from './components/new/new.component';
 import { UpdateComponent } from './components/update/update.component';
 import { DeleteComponent } from './components/delete/delete.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   {path:'all',component:AllComponent},
   {path:'new',component:NewComponent},
   {path:'find',component:FindComponent},
