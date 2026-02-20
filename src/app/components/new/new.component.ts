@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Post, PostService } from '../services/post.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class NewComponent implements OnInit {
 
-  list: any;
+  list: Post | null = null
 
   form = new FormGroup({
     id: new FormControl('', [
@@ -23,19 +24,20 @@ export class NewComponent implements OnInit {
     body: new FormControl('', Validators.required),
   });
 
-  constructor(private http: HttpClient, private _snackBar: MatSnackBar) { }
+   constructor(
+    private postService: PostService,
+    private _snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void { }
 
   createData() {
-
-    if (this.form.valid) {
-
-      this.http.post<any>(
-        'https://jsonplaceholder.typicode.com/posts',
-        this.form.value
-      )
-        .subscribe(data => {
+      if (this.form.valid) {
+    const formValue = this.form.value as { userId: string; title: string; body: string };
+    const { userId, title, body } = formValue;
+    
+    this.postService.create(Number(userId), title, body).subscribe(
+        data => {
           console.log(data);
           this.list = data;
 
@@ -45,8 +47,18 @@ export class NewComponent implements OnInit {
             duration: 3000,
             direction: 'ltr'
           });
-        });
 
+          this.form.reset(); 
+        },
+        error => {
+          console.error('Error creating post', error);
+          this._snackBar.open('Failed to create post!', 'Close', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 3000
+          });
+        }
+      );
     }
   }
 
