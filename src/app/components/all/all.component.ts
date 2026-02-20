@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Post, PostService } from '../services/post.service';
 
 
 @Component({
@@ -9,13 +10,14 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AllComponent implements OnInit {
 
-  list: any[] = [];   
+  list: Post[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private postService: PostService) {
+
+  }
 
   ngOnInit(): void {
-    this.http
-      .get<any[]>('https://jsonplaceholder.typicode.com/posts')
+    this.postService.findAll()
       .subscribe(data => {
         console.log(data);
         this.list = data;

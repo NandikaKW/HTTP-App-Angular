@@ -18,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HomeComponent } from './components/home/home.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { ServicesComponent } from './components/services/services.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +27,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     FindComponent,
     UpdateComponent,
     DeleteComponent,
-    HomeComponent
+    HomeComponent,
+    ServicesComponent
     
   ],
   imports: [
