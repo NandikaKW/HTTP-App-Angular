@@ -1,59 +1,224 @@
-<mat-form-field class="example-full-width" appearance="outline" style="width: 100%;">
-  <mat-label>Post ID</mat-label>
-  <input matInput placeholder="Enter post id here" [(ngModel)]="searchid"
-  (keyup.enter)="loadData()"
-  >
-</mat-form-field>
+<div class="update-container">
+  <!-- Success Message Popup -->
+  <div class="success-message" *ngIf="showSuccessMessage">
+    <div class="success-content">
+      <mat-icon>check_circle</mat-icon>
+      <div class="success-text">
+        <h4>Post Updated Successfully!</h4>
+        <p>The post has been modified</p>
+      </div>
+      <button class="close-btn" (click)="showSuccessMessage = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
 
-<hr>
+  <!-- Header Section with Green Theme -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-badge">
+        <mat-icon>edit</mat-icon>
+        <span>Update Post</span>
+      </div>
+      <h1 class="page-title">Update Post</h1>
+      <p class="page-description">Modify existing posts with ease</p>
+    </div>
+  </div>
 
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-card">
+      <div class="search-icon-wrapper">
+        <mat-icon>search</mat-icon>
+      </div>
+      
+      <div class="search-input-wrapper">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Enter Post ID to Update</mat-label>
+          <input 
+            matInput 
+            placeholder="e.g., 1, 2, 3..." 
+            [(ngModel)]="searchid"
+            (keyup.enter)="loadData()"
+          >
+          <mat-icon matSuffix class="input-icon">edit_note</mat-icon>
+        </mat-form-field>
+      </div>
 
-<form [formGroup]="form" (ngSubmit)="updateData()">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
+      <button 
+        class="search-btn" 
+        (click)="loadData()"
+        [disabled]="!searchid"
+        matTooltip="Search post to update">
+        <mat-icon>search</mat-icon>
+        <span>Find Post</span>
+      </button>
+    </div>
+  </div>
 
-        <div class="card shadow p-4">
+  <!-- Form Section (shown when post is loaded) -->
+  <div class="form-wrapper" *ngIf="form.get('id')?.value">
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="header-icon">
+          <mat-icon>edit_note</mat-icon>
+        </div>
+        <h2>Edit Post Details</h2>
+        <p>Update the information below</p>
+      </div>
 
-          <h3 class="text-center mb-4">Update Post</h3>
-
-          <!-- ID -->
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>ID</mat-label>
-            <input formControlName="id" matInput type="number" placeholder="Ex. 1">
-          </mat-form-field>
-
-          <!-- User ID -->
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>User ID</mat-label>
-            <input formControlName="userId" matInput type="number" placeholder="Ex. 1001">
-          </mat-form-field>
-
-          <!-- Title -->
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>Title</mat-label>
-            <input formControlName="title" matInput placeholder="Enter title">
-          </mat-form-field>
-
-          <!-- Body -->
-          <mat-form-field appearance="outline" class="w-100 mb-4">
-            <mat-label>Body</mat-label>
-            <textarea formControlName="body" matInput rows="4" placeholder="Enter body"></textarea>
-          </mat-form-field>
-
-          <!-- Button -->
-          <div class="text-center">
-            <button style="width: 100%;"
-            [disabled]="form.invalid"
-              mat-raised-button color="primary" type="submit">
-              <mat-icon>edit</mat-icon>
-              Update
-            </button>
+      <form [formGroup]="form" (ngSubmit)="updateData()">
+        <div class="form-grid">
+          <!-- ID Field (Disabled) -->
+          <div class="form-field">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Post ID</mat-label>
+              <input 
+                formControlName="id" 
+                matInput 
+                type="number" 
+                placeholder="Post ID"
+                readonly
+                matTooltip="Post ID cannot be changed">
+              <mat-icon matSuffix>tag</mat-icon>
+            </mat-form-field>
           </div>
 
+          <!-- User ID Field -->
+          <div class="form-field">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>User ID</mat-label>
+              <input 
+                formControlName="userId" 
+                matInput 
+                type="number" 
+                placeholder="e.g., 1001"
+                matTooltip="ID of the user">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="form.get('userId')?.hasError('required')">
+                User ID is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Title Field (Full Width) -->
+          <div class="form-field full-width">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Post Title</mat-label>
+              <input 
+                formControlName="title" 
+                matInput 
+                placeholder="Enter updated title"
+                matTooltip="The title of your post">
+              <mat-icon matSuffix>title</mat-icon>
+              <mat-error *ngIf="form.get('title')?.hasError('required')">
+                Title is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Body Field (Full Width) -->
+          <div class="form-field full-width">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Post Content</mat-label>
+              <textarea 
+                formControlName="body" 
+                matInput 
+                rows="6" 
+                placeholder="Enter updated content..."
+                matTooltip="The main content of your post"></textarea>
+              <mat-icon matSuffix>description</mat-icon>
+              <mat-error *ngIf="form.get('body')?.hasError('required')">
+                Content is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Character Count -->
+          <div class="form-field full-width">
+            <div class="char-counter" *ngIf="form.get('body')?.value">
+              <mat-icon>text_fields</mat-icon>
+              <span>{{form.get('body')?.value?.length || 0}} characters</span>
+            </div>
+          </div>
         </div>
 
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="resetForm()"
+            matTooltip="Clear all fields">
+            <mat-icon>clear</mat-icon>
+            <span>Clear</span>
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn-submit" 
+            [disabled]="form.invalid"
+            matTooltip="Update post">
+            <mat-icon>update</mat-icon>
+            <span>Update Post</span>
+          </button>
+        </div>
+
+        <!-- Form Status -->
+        <div class="form-status" *ngIf="form.invalid && form.touched">
+          <mat-icon>info</mat-icon>
+          <span>Please fill all required fields correctly</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="preview-card" *ngIf="form.valid">
+      <div class="preview-header">
+        <mat-icon>preview</mat-icon>
+        <h3>Live Preview</h3>
+      </div>
+      
+      <div class="preview-content">
+        <div class="preview-badge">
+          <span class="badge-id">#{{form.get('id')?.value}}</span>
+          <span class="badge-user">User {{form.get('userId')?.value}}</span>
+        </div>
+        
+        <h4 class="preview-title">{{form.get('title')?.value || 'Post Title'}}</h4>
+        
+        <div class="preview-body">
+          {{form.get('body')?.value || 'Post content will appear here...'}}
+        </div>
+      </div>
+      
+      <div class="preview-footer">
+        <mat-icon>check_circle</mat-icon>
+        <span>Ready to update</span>
       </div>
     </div>
   </div>
-</form>
+
+  <!-- Welcome State (when no post loaded) -->
+  <div class="welcome-state" *ngIf="!form.get('id')?.value">
+    <div class="welcome-icon-wrapper">
+      <mat-icon>edit</mat-icon>
+    </div>
+    <h3>Ready to Update a Post?</h3>
+    <p>Enter a post ID above and click the search button</p>
+    <div class="feature-suggestions">
+      <div class="suggestion-item">
+        <mat-icon>looks_one</mat-icon>
+        <span>Try ID: 1</span>
+      </div>
+      <div class="suggestion-item">
+        <mat-icon>looks_two</mat-icon>
+        <span>Try ID: 2</span>
+      </div>
+      <div class="suggestion-item">
+        <mat-icon>looks_3</mat-icon>
+        <span>Try ID: 3</span>
+      </div>
+    </div>
+  </div>
+</div>
