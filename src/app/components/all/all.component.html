@@ -1,21 +1,245 @@
-<table class="table table-hover">
+<div class="posts-container">
+  <!-- Header Section with Background -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-badge">
+        <mat-icon>article</mat-icon>
+        <span>Post Management</span>
+      </div>
+      <h1 class="page-title">All Posts</h1>
+      <p class="page-description">Browse and manage all your posts in one place</p>
+      
+      <!-- Stats Cards -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <mat-icon>description</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{list.length}}</span>
+            <span class="stat-label">Total Posts</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <mat-icon>people</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{uniqueUserCount}}</span>
+            <span class="stat-label">Unique Users</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <mat-icon>update</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{list.length > 0 ? 'Latest' : '0'}}</span>
+            <span class="stat-label">Last Updated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>User ID</th>
-      <th>Title</th>
-      <th>Body</th>
-    </tr>
-  </thead>
+  <!-- Search and Filter Bar -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input 
+        type="text" 
+        placeholder="Search posts by title or body..." 
+        (input)="onSearch($event)"
+        class="search-input">
+    </div>
+    
+    <div class="filter-actions">
+      <button mat-button class="btn-outline-modern" (click)="refreshPosts()">
+        <mat-icon>refresh</mat-icon>
+        <span>Refresh</span>
+      </button>
+      <button mat-raised-button class="btn-primary-modern" routerLink="/new">
+        <mat-icon>add_circle</mat-icon>
+        <span>New Post</span>
+      </button>
+    </div>
+  </div>
 
-  <tbody>
-    <tr *ngFor="let tempData of list">
-      <td>{{ tempData.id }}</td>
-      <td>{{ tempData.userId }}</td>
-      <td>{{ tempData.title }}</td>
-      <td>{{ tempData.body }}</td>
-    </tr>
-  </tbody>
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading posts...</p>
+  </div>
 
-</table>
+  <!-- Table Section -->
+  <div class="table-container" *ngIf="!isLoading">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Title</th>
+            <th>Body</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <tr *ngFor="let post of paginatedList; let i = index" class="table-row">
+            <td class="id-cell">
+              <span class="id-badge">#{{post.id}}</span>
+            </td>
+            
+            <td class="user-cell">
+              <div class="user-avatar">
+                <mat-icon>account_circle</mat-icon>
+                <span>{{post.userId}}</span>
+              </div>
+            </td>
+            
+            <td class="title-cell">
+              <div class="title-wrapper">
+                <span class="post-title">{{post.title}}</span>
+                <span class="post-excerpt">{{post.body | slice:0:30}}...</span>
+              </div>
+            </td>
+            
+            <td class="body-cell">
+              <p class="post-body">{{post.body | slice:0:80}}{{post.body.length > 80 ? '...' : ''}}</p>
+            </td>
+            
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button mat-icon-button class="action-btn view-btn" 
+                        [matTooltip]="'View post #' + post.id"
+                        (click)="openPostDetails(post)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                
+                <button mat-icon-button class="action-btn edit-btn" [matTooltip]="'Edit post'" routerLink="/update" [queryParams]="{id: post.id}">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                
+                <button mat-icon-button class="action-btn delete-btn" [matTooltip]="'Delete post'" routerLink="/delete" [queryParams]="{id: post.id}">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Empty State - Improved Design -->
+          <tr *ngIf="filteredList.length === 0">
+            <td colspan="5" class="empty-state">
+              <div class="empty-state-content">
+                <div class="empty-state-icon">
+                  <mat-icon>inbox</mat-icon>
+                </div>
+                <h3>No posts found</h3>
+                <p>Try adjusting your search or create a new post</p>
+                <button mat-raised-button class="create-post-btn" routerLink="/new">
+                  <mat-icon>add_circle</mat-icon>
+                  <span>Create New Post</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table Footer with Pagination -->
+    <div class="table-footer" *ngIf="filteredList.length > 0">
+      <div class="pagination-info">
+        Showing {{paginatedList.length}} of {{filteredList.length}} posts
+      </div>
+      
+      <div class="pagination-controls">
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <span class="page-indicator">Page {{currentPage}} of {{totalPages}}</span>
+        
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Details Popup Card - No scrolling on popup itself, only inside content -->
+  <div class="modal-overlay" *ngIf="selectedPost" (click)="closePostDetails()">
+    <div class="post-detail-card" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closePostDetails()">
+        <mat-icon>close</mat-icon>
+      </button>
+      
+      <!-- Header Section -->
+      <div class="card-header">
+        <div class="header-badge">
+          <mat-icon>article</mat-icon>
+          <span>Post Details</span>
+        </div>
+        <h2 class="post-title-full">{{selectedPost.title}}</h2>
+      </div>
+      
+      <!-- Scrollable Content Area - Only this section scrolls -->
+      <div class="card-content scrollable-content">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">
+              <mat-icon>tag</mat-icon>
+              POST ID
+            </span>
+            <span class="detail-value id-value">#{{selectedPost.id}}</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">
+              <mat-icon>person</mat-icon>
+              USER ID
+            </span>
+            <span class="detail-value">{{selectedPost.userId}}</span>
+          </div>
+        </div>
+        
+        <div class="content-section">
+          <span class="detail-label">
+            <mat-icon>description</mat-icon>
+            CONTENT
+          </span>
+          <div class="content-box">
+            <p class="post-body-full">{{selectedPost.body}}</p>
+          </div>
+        </div>
+        
+        <div class="card-stats">
+          <div class="stat-chip">
+            <mat-icon>access_time</mat-icon>
+            <span>Posted recently</span>
+          </div>
+          <div class="stat-chip">
+            <mat-icon>visibility</mat-icon>
+            <span>42 views</span>
+          </div>
+          <div class="stat-chip">
+            <mat-icon>chat_bubble</mat-icon>
+            <span>7 comments</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer Actions - Fixed at bottom -->
+      <div class="card-footer">
+        <div class="card-actions">
+          <button mat-stroked-button class="btn-outline-modern" (click)="closePostDetails()">
+            <mat-icon>close</mat-icon>
+            Close
+          </button>
+          <button mat-raised-button class="btn-primary-modern" 
+                  [routerLink]="['/update']" 
+                  [queryParams]="{id: selectedPost.id}"
+                  (click)="closePostDetails()">
+            <mat-icon>edit</mat-icon>
+            Edit Post
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
