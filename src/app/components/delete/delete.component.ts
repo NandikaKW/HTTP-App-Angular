@@ -9,9 +9,10 @@ import { Post, PostService } from '../services/post.service';
   styleUrls: ['./delete.component.scss']
 })
 export class DeleteComponent implements OnInit {
-
-
   list: Post[] = [];
+  isLoading = true;
+  showModal = false;
+  selectedPostId: number | null = null;
 
   constructor(
     private postService: PostService,
@@ -19,26 +20,38 @@ export class DeleteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadPosts();
+  }
+
+  loadPosts(): void {
+    this.isLoading = true;
     this.postService.findAll().subscribe(data => {
-      console.log(data);
       this.list = data;
+      this.isLoading = false;
     });
   }
-  // Function to delete a post by ID with confirm
-  delete(id: number) {
-    // Show browser confirm dialog
-    const confirmed = confirm('Are you sure you want to delete this post?');
 
-    if (confirmed) {
-      this.postService.delete(id).subscribe(() => {
-        // Remove deleted post from list immediately
-        this.list = this.list.filter(item => item.id !== id);
+  openDeleteModal(id: number): void {
+    this.selectedPostId = id;
+    this.showModal = true;
+  }
 
-        // Show success notification
-        this._snackBar.open('Post Deleted Successfully!', 'Close', {
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedPostId = null;
+  }
+
+  confirmDelete(): void {
+    if (this.selectedPostId) {
+      this.postService.delete(this.selectedPostId).subscribe(() => {
+        this.list = this.list.filter(item => item.id !== this.selectedPostId);
+        this.closeModal();
+        
+        this._snackBar.open('✓ Post deleted successfully!', 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
+          panelClass: ['custom-success-snackbar']
         });
       });
     }
