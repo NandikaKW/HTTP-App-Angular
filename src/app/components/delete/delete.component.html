@@ -1,5 +1,19 @@
 <div class="delete-container">
-  <!-- Header Section with New Background Color -->
+  <!-- Success Message Popup -->
+  <div class="success-message" *ngIf="showSuccessMessage">
+    <div class="success-content">
+      <mat-icon>check_circle</mat-icon>
+      <div class="success-text">
+        <h4>Post Deleted Successfully!</h4>
+        <p>The post has been removed</p>
+      </div>
+      <button class="close-btn" (click)="showSuccessMessage = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header Section with Green Theme -->
   <div class="page-header">
     <div class="header-content">
       <div class="header-badge">

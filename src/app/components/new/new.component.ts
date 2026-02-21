@@ -11,8 +11,8 @@ import { Post, PostService } from '../services/post.service';
   styleUrls: ['./new.component.scss']
 })
 export class NewComponent implements OnInit {
-
-  list: Post | null = null
+  list: Post | null = null;
+  showSuccessMessage = false; // Beautiful popup message
 
   form = new FormGroup({
     id: new FormControl('', [
@@ -24,7 +24,7 @@ export class NewComponent implements OnInit {
     body: new FormControl('', Validators.required),
   });
 
-   constructor(
+  constructor(
     private postService: PostService,
     private _snackBar: MatSnackBar
   ) { }
@@ -32,34 +32,39 @@ export class NewComponent implements OnInit {
   ngOnInit(): void { }
 
   createData() {
-      if (this.form.valid) {
-    const formValue = this.form.value as { userId: string; title: string; body: string };
-    const { userId, title, body } = formValue;
-    
-    this.postService.create(Number(userId), title, body).subscribe(
+    if (this.form.valid) {
+      const formValue = this.form.value as { userId: string; title: string; body: string };
+      const { userId, title, body } = formValue;
+      
+      this.postService.create(Number(userId), title, body).subscribe(
         data => {
           console.log(data);
           this.list = data;
 
-          this._snackBar.open('Post Created Successfully!', 'Close', {
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            duration: 3000,
-            direction: 'ltr'
-          });
+          // Show the beautiful success popup
+          this.showSuccessMessage = true;
+          setTimeout(() => {
+            this.showSuccessMessage = false;
+          }, 5000);
 
-          this.form.reset(); 
+          this.form.reset();
         },
         error => {
           console.error('Error creating post', error);
+          // Keep only error snackbar (or remove if you want consistent UI)
           this._snackBar.open('Failed to create post!', 'Close', {
             horizontalPosition: 'center',
             verticalPosition: 'top',
-            duration: 3000
+            duration: 3000,
+            panelClass: ['error-snackbar']
           });
         }
       );
     }
   }
 
+  // UI helper method
+  resetForm() {
+    this.form.reset();
+  }
 }

@@ -4,8 +4,73 @@
   padding: 2rem;
   background: #f4f7fb;
   min-height: calc(100vh - 80px);
+  position: relative;
 
-  // Page Header
+  // Success Message Popup (Green theme)
+  .success-message {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+
+    .success-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 60px;
+      box-shadow: 0 15px 30px -8px rgba(110, 159, 88, 0.3);
+      border: 1px solid #6e9f58;
+
+      mat-icon {
+        color: #6e9f58;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .success-text {
+        h4 {
+          color: #1a3a2a;
+          font-weight: 600;
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        p {
+          color: #5f6b66;
+          font-size: 0.85rem;
+          margin: 0;
+        }
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #5f6b66;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+
+        mat-icon {
+          color: #5f6b66;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+
+        &:hover mat-icon {
+          color: #6e9f58;
+        }
+      }
+    }
+  }
+
+  // Page Header - YOUR EXACT COLOR TONE
   .page-header {
     background: linear-gradient(135deg, rgba(110, 159, 88, 0.95) 0%, rgba(79, 128, 73, 0.98) 100%),
                 url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop');
@@ -102,10 +167,8 @@
       background: #e8f3e2;
       color: #2a4b32;
       
-      mat-spinner {
-        ::ng-deep circle {
-          stroke: #2a4b32 !important;
-        }
+      ::ng-deep mat-spinner circle {
+        stroke: #2a4b32;
       }
     }
 
@@ -116,16 +179,6 @@
       mat-icon {
         font-size: 20px;
         color: #856404;
-      }
-    }
-
-    &.success-alert {
-      background: #d4edda;
-      color: #155724;
-      
-      mat-icon {
-        font-size: 20px;
-        color: #155724;
       }
     }
   }
@@ -299,7 +352,7 @@
       font-size: 28px;
       width: 28px;
       height: 28px;
-      color: #dc3545;
+      color: #6e9f58;
     }
 
     h3 {
@@ -341,29 +394,27 @@
     }
 
     .confirm-btn {
-      background: #dc3545;
+      background: linear-gradient(135deg, #6e9f58, #4f8049);
       color: white;
 
       &:hover {
-        background: #b02a37;
+        background: linear-gradient(135deg, #4f8049, #3d6a38);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        box-shadow: 0 4px 12px rgba(110, 159, 88, 0.3);
       }
     }
   }
 }
 
-// Success Snackbar
-::ng-deep .success-snackbar {
-  background: #10b981 !important;
-  color: white !important;
-  border-radius: 50px !important;
-  padding: 0.5rem 1.5rem !important;
-  font-weight: 500 !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
-  
-  .mat-simple-snackbar-action {
-    color: white !important;
+// Animations
+@keyframes slideIn {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
@@ -389,6 +440,55 @@
       .page-title {
         font-size: 2rem;
       }
+    }
+
+    .success-message {
+      left: 1rem;
+      right: 1rem;
+      
+      .success-content {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+
+        .success-text {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .delete-container {
+    .page-header {
+      padding: 1.5rem;
+
+      .page-title {
+        font-size: 1.8rem;
+      }
+
+      .stat-card {
+        padding: 0.8rem 1.2rem;
+        
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .stat-value {
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .delete-btn span {
+      display: none;
+    }
+
+    .delete-btn mat-icon {
+      margin: 0;
     }
   }
 }

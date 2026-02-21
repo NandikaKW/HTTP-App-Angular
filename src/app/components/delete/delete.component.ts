@@ -13,10 +13,10 @@ export class DeleteComponent implements OnInit {
   isLoading = true;
   showModal = false;
   selectedPostId: number | null = null;
+  showSuccessMessage = false;
 
   constructor(
-    private postService: PostService,
-    private _snackBar: MatSnackBar
+    private postService: PostService
   ) { }
 
   ngOnInit(): void {
@@ -47,12 +47,11 @@ export class DeleteComponent implements OnInit {
         this.list = this.list.filter(item => item.id !== this.selectedPostId);
         this.closeModal();
         
-        this._snackBar.open('✓ Post deleted successfully!', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['custom-success-snackbar']
-        });
+        // Show success popup
+        this.showSuccessMessage = true;
+        setTimeout(() => {
+          this.showSuccessMessage = false;
+        }, 5000);
       });
     }
   }
