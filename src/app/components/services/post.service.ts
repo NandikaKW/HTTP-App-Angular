@@ -35,7 +35,7 @@ export class PostService {
   }
 
   // Update an existing post
-  update(id: number, userId: number, title: string, body: string): Observable<Post> {
+  update(id: number, userId: string, title: string, body: string): Observable<Post> {
     const postData = { id, userId, title, body };
     return this.http.put<Post>(`${this.apiUrl}/${id}`, postData);
   }
