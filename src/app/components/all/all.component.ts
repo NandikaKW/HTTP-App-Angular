@@ -12,6 +12,8 @@ export class AllComponent implements OnInit {
   list: Post[] = [];
   filteredList: Post[] = [];
   isLoading = true;
+  sortField: 'id' | 'title' | 'userId' = 'id';
+  sortDirection: 'asc' | 'desc' = 'asc';
   
   // Pagination
   currentPage = 1;
@@ -37,6 +39,7 @@ export class AllComponent implements OnInit {
         console.log(data);
         this.list = data;
         this.filteredList = data;
+        this.sortData(this.sortField); // Apply default sorting
         this.calculatePagination();
         this.isLoading = false;
       });
@@ -56,6 +59,7 @@ export class AllComponent implements OnInit {
       post.id.toString().includes(this.searchTerm) ||
       post.userId.toString().includes(this.searchTerm)
     );
+    this.sortData(this.sortField); // Re-apply sorting after search
     this.currentPage = 1;
     this.calculatePagination();
   }
@@ -74,13 +78,13 @@ export class AllComponent implements OnInit {
   // Open post details modal
   openPostDetails(post: Post): void {
     this.selectedPost = post;
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
   }
 
   // Close post details modal
   closePostDetails(): void {
     this.selectedPost = null;
-    document.body.style.overflow = 'auto'; // Restore scrolling
+    document.body.style.overflow = 'auto';
   }
 
   // Pagination methods
@@ -96,5 +100,32 @@ export class AllComponent implements OnInit {
   get paginatedList(): Post[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredList.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  sortData(field: 'id' | 'title' | 'userId'): void {
+    if (this.sortField === field) {
+      // Toggle direction
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredList.sort((a, b) => {
+      let valueA: any = a[field];
+      let valueB: any = b[field];
+
+      // Handle string comparison
+      if (typeof valueA === 'string') {
+        valueA = valueA.toLowerCase();
+        valueB = valueB.toLowerCase();
+      }
+
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    this.currentPage = 1;
   }
 }

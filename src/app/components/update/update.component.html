@@ -56,7 +56,7 @@
     </div>
   </div>
 
-  <!-- Form Section (shown when post is loaded) -->
+  <!-- Form Section  -->
   <div class="form-wrapper" *ngIf="form.get('id')?.value">
     <div class="form-card">
       <div class="form-card-header">
@@ -69,7 +69,7 @@
 
       <form [formGroup]="form" (ngSubmit)="updateData()">
         <div class="form-grid">
-          <!-- ID Field (Disabled) -->
+          <!-- ID Field -->
           <div class="form-field">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Post ID</mat-label>
@@ -101,7 +101,7 @@
             </mat-form-field>
           </div>
 
-          <!-- Title Field (Full Width) -->
+          <!-- Title Field -->
           <div class="form-field full-width">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Post Title</mat-label>
@@ -117,7 +117,7 @@
             </mat-form-field>
           </div>
 
-          <!-- Body Field (Full Width) -->
+          <!-- Body Field -->
           <div class="form-field full-width">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Post Content</mat-label>
@@ -199,7 +199,7 @@
     </div>
   </div>
 
-  <!-- Welcome State (when no post loaded) -->
+  <!-- Welcome State  -->
   <div class="welcome-state" *ngIf="!form.get('id')?.value">
     <div class="welcome-icon-wrapper">
       <mat-icon>edit</mat-icon>

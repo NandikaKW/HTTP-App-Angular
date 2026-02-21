@@ -12,7 +12,7 @@ import { Post, PostService } from '../services/post.service';
 })
 export class NewComponent implements OnInit {
   list: Post | null = null;
-  showSuccessMessage = false; // Beautiful popup message
+  showSuccessMessage = false; 
 
   form = new FormGroup({
     id: new FormControl('', [
