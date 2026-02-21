@@ -1,30 +1,137 @@
-<mat-form-field class="example-full-width" appearance="outline" style="width: 100%;">
-  <mat-label>Post ID</mat-label>
-  <input matInput placeholder="Enter post id here" [(ngModel)]="searchid"
-  (keyup.enter)="loadData()"
-  >
-</mat-form-field>
+<div class="find-container">
+  <!-- Header Section with Background -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-badge">
+        <mat-icon>search</mat-icon>
+        <span>Find Posts</span>
+      </div>
+      <h1 class="page-title">Search Posts</h1>
+      <p class="page-description">Find any post by its ID number</p>
+    </div>
+  </div>
 
-<hr>
+  <!-- Search Card -->
+  <div class="search-card">
+    <div class="search-icon-wrapper">
+      <mat-icon>search</mat-icon>
+    </div>
+    
+    <div class="search-input-wrapper">
+      <mat-form-field appearance="outline" class="full-width-input">
+        <mat-label>Enter Post ID</mat-label>
+        <input 
+          matInput 
+          placeholder="e.g., 1, 2, 3..." 
+          [(ngModel)]="searchid"
+          (keyup.enter)="loadData()"
+        >
+        <mat-icon matSuffix class="input-icon">tag</mat-icon>
+      </mat-form-field>
+    </div>
 
-<table class="table table-hover">
+    <button 
+      class="search-btn" 
+      (click)="loadData()"
+      [disabled]="!searchid"
+      matTooltip="Click to search">
+      <mat-icon>search</mat-icon>
+      <span>Find Post</span>
+    </button>
+  </div>
 
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>User ID</th>
-      <th>Title</th>
-      <th>Body</th>
-    </tr>
-  </thead>
+  <!-- Results Section -->
+  <div class="results-section" *ngIf="list.length > 0">
+    <div class="results-header">
+      <div class="results-title">
+        <mat-icon>article</mat-icon>
+        <h2>Search Results</h2>
+      </div>
+      <div class="results-count">
+        Found <span class="highlight">{{list.length}}</span> post(s)
+      </div>
+    </div>
 
-  <tbody>
-    <tr *ngFor="let tempData of list">
-      <td>{{ tempData.id }}</td>
-      <td>{{ tempData.userId }}</td>
-      <td>{{ tempData.title }}</td>
-      <td>{{ tempData.body }}</td>
-    </tr>
-  </tbody>
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
 
-</table>
+    <!-- Table Container -->
+    <div class="table-container">
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User ID</th>
+              <th>Title</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            <tr *ngFor="let post of list" class="table-row">
+              <td class="id-cell">
+                <span class="id-badge">#{{post.id}}</span>
+              </td>
+              
+              <td class="user-cell">
+                <div class="user-avatar">
+                  <mat-icon>account_circle</mat-icon>
+                  <span>{{post.userId}}</span>
+                </div>
+              </td>
+              
+              <td class="title-cell">
+                <div class="title-wrapper">
+                  <span class="post-title">{{post.title}}</span>
+                </div>
+              </td>
+              
+              <td class="body-cell">
+                <p class="post-body">{{post.body}}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (when no results) -->
+  <div class="empty-state" *ngIf="searchPerformed && list.length === 0 && !isLoading">
+    <div class="empty-icon-wrapper">
+      <mat-icon>search_off</mat-icon>
+    </div>
+    <h3>No Post Found</h3>
+    <p>We couldn't find any post with ID <span class="search-term">"{{searchid}}"</span></p>
+    <button class="try-again-btn" (click)="searchid = ''; searchPerformed = false;">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </div>
+
+  <!-- Initial State (welcome message) -->
+  <div class="welcome-state" *ngIf="!searchPerformed && list.length === 0">
+    <div class="welcome-icon-wrapper">
+      <mat-icon>travel_explore</mat-icon>
+    </div>
+    <h3>Ready to Find a Post?</h3>
+    <p>Enter a post ID above and click the search button</p>
+    <div class="feature-suggestions">
+      <div class="suggestion-item">
+        <mat-icon>looks_one</mat-icon>
+        <span>Try ID: 1</span>
+      </div>
+      <div class="suggestion-item">
+        <mat-icon>looks_two</mat-icon>
+        <span>Try ID: 2</span>
+      </div>
+      <div class="suggestion-item">
+        <mat-icon>looks_3</mat-icon>
+        <span>Try ID: 3</span>
+      </div>
+    </div>
+  </div>
+</div>
