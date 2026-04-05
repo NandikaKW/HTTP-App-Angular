@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Post, PostService } from '../services/post.service';
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
   styleUrls: ['./all.component.scss']
 })
-export class AllComponent implements OnInit {
+export class AllComponent implements OnInit, OnDestroy {
   list: Post[] = [];
   filteredList: Post[] = [];
   isLoading = true;
@@ -24,24 +24,74 @@ export class AllComponent implements OnInit {
   searchTerm = '';
 
   // Selected post for detail view
-  selectedPost: Post | null = null;
+  selectedPost: any = null; // Changed to any to include docId
+
+  // Subscription for Firestore
+  private postsSubscription: Subscription | null = null;
 
   constructor(private http: HttpClient, private postService: PostService) {}
 
   ngOnInit(): void {
-    this.loadPosts();
+    this.loadPostsFromFirestore();
   }
 
-  loadPosts(): void {
+  ngOnDestroy(): void {
+    // Clean up subscription to prevent memory leaks
+    if (this.postsSubscription) {
+      this.postsSubscription.unsubscribe();
+    }
+  }
+
+  // Load posts from Firestore with document IDs
+  loadPostsFromFirestore(): void {
     this.isLoading = true;
+    
+    // Subscribe to Firestore real-time updates
+    this.postsSubscription = this.postService.findAllDataFirestoreWithIds()
+      .subscribe({
+        next: (postsWithIds) => {
+          console.log('Posts from Firestore:', postsWithIds);
+          
+          // Transform Firestore data to match Post interface
+          // Firestore documents might have string IDs, so we need to handle that
+          this.list = postsWithIds.map((item: any, index: number) => ({
+            id: parseInt(item.id) || index + 1, // Use existing id or generate one
+            userId: item.userId,
+            title: item.title,
+            body: item.body,
+            docId: item.docId // Store Firestore document ID for updates/deletes
+          }));
+          
+          this.filteredList = [...this.list];
+          this.sortData(this.sortField);
+          this.calculatePagination();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading posts from Firestore:', error);
+          this.isLoading = false;
+          // Fallback to API if needed
+          this.loadPostsFromAPI();
+        }
+      });
+  }
+
+  // Fallback method to load from API if Firestore fails
+  loadPostsFromAPI(): void {
     this.postService.findAll()
-      .subscribe(data => {
-        console.log(data);
-        this.list = data;
-        this.filteredList = data;
-        this.sortData(this.sortField); // Apply default sorting
-        this.calculatePagination();
-        this.isLoading = false;
+      .subscribe({
+        next: (data) => {
+          console.log('Posts from API (fallback):', data);
+          this.list = data;
+          this.filteredList = data;
+          this.sortData(this.sortField);
+          this.calculatePagination();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading posts from API:', error);
+          this.isLoading = false;
+        }
       });
   }
 
@@ -59,14 +109,14 @@ export class AllComponent implements OnInit {
       post.id.toString().includes(this.searchTerm) ||
       post.userId.toString().includes(this.searchTerm)
     );
-    this.sortData(this.sortField); // Re-apply sorting after search
+    this.sortData(this.sortField);
     this.currentPage = 1;
     this.calculatePagination();
   }
 
-  // Refresh posts
+  // Refresh posts - reload from Firestore
   refreshPosts(): void {
-    this.loadPosts();
+    this.loadPostsFromFirestore();
     this.searchTerm = '';
     // Clear search input if needed
     const searchInput = document.querySelector('.search-input') as HTMLInputElement;
@@ -76,7 +126,7 @@ export class AllComponent implements OnInit {
   }
 
   // Open post details modal
-  openPostDetails(post: Post): void {
+  openPostDetails(post: any): void {
     this.selectedPost = post;
     document.body.style.overflow = 'hidden';
   }
@@ -90,21 +140,25 @@ export class AllComponent implements OnInit {
   // Pagination methods
   calculatePagination(): void {
     this.totalPages = Math.ceil(this.filteredList.length / this.itemsPerPage);
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+    }
   }
 
   changePage(page: number): void {
-    this.currentPage = page;
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 
   // Get paginated data
-  get paginatedList(): Post[] {
+  get paginatedList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredList.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   sortData(field: 'id' | 'title' | 'userId'): void {
     if (this.sortField === field) {
-      // Toggle direction
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortField = field;
@@ -115,7 +169,6 @@ export class AllComponent implements OnInit {
       let valueA: any = a[field];
       let valueB: any = b[field];
 
-      // Handle string comparison
       if (typeof valueA === 'string') {
         valueA = valueA.toLowerCase();
         valueB = valueB.toLowerCase();

@@ -11,7 +11,7 @@ import { DeleteComponent } from './components/delete/delete.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,8 +20,14 @@ import { HomeComponent } from './components/home/home.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { ServicesComponent } from './components/services/services.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatProgressSpinnerModule, MatSpinner} from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
+import { LoadingComponent } from './components/loading/loading.component';
+import { HttpManagerInterceptor } from './components/interceptors/http-manager.interceptor';
+import { environment } from 'src/environments/environment';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +37,8 @@ import { RouterModule } from '@angular/router';
     UpdateComponent,
     DeleteComponent,
     HomeComponent,
-    ServicesComponent
+    ServicesComponent,
+    LoadingComponent
     
   ],
   imports: [
@@ -53,10 +60,17 @@ import { RouterModule } from '@angular/router';
     MatButtonModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    RouterModule
-
+    RouterModule,
+    // Firebase initialization
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireModule,
+    AngularFireStorageModule
+    
+    
+],
+  providers: [
+    {provide:HTTP_INTERCEPTORS,useClass:HttpManagerInterceptor,multi:true}
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

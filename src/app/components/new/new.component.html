@@ -1,5 +1,5 @@
 <div class="new-container">
-  <!-- Header Section with Background -->
+  <!-- Header Section -->
   <div class="page-header">
     <div class="header-content">
       <div class="header-badge">
@@ -11,8 +11,19 @@
     </div>
   </div>
 
-  <!-- Form Card -->
+  <!-- Success Toast - Single message only -->
+  <div class="success-toast" *ngIf="showSuccessMessage">
+    <div class="toast-content">
+      <mat-icon>check_circle</mat-icon>
+      <div class="toast-text">
+        <strong>Success!</strong> Your post has been created.
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Wrapper -->
   <div class="form-wrapper">
+    <!-- Main Form Card -->
     <div class="form-card">
       <div class="form-card-header">
         <div class="header-icon">
@@ -33,13 +44,11 @@
                 matInput 
                 type="number" 
                 placeholder="e.g., 101"
-                matTooltip="Unique identifier for the post">
+                [errorStateMatcher]="matcher">
               <mat-icon matSuffix>tag</mat-icon>
-              <mat-error *ngIf="form.get('id')?.hasError('required')">
-                ID is required
-              </mat-error>
-              <mat-error *ngIf="form.get('id')?.hasError('pattern')">
-                Enter a valid ID (max 5 digits)
+              <mat-error *ngIf="form.get('id')?.invalid && form.get('id')?.touched">
+                <span *ngIf="form.get('id')?.hasError('required')">ID is required</span>
+                <span *ngIf="form.get('id')?.hasError('pattern')">Enter a valid ID (max 5 digits)</span>
               </mat-error>
             </mat-form-field>
           </div>
@@ -53,15 +62,15 @@
                 matInput 
                 type="number" 
                 placeholder="e.g., 1001"
-                matTooltip="ID of the user creating this post">
+                [errorStateMatcher]="matcher">
               <mat-icon matSuffix>person</mat-icon>
-              <mat-error *ngIf="form.get('userId')?.hasError('required')">
+              <mat-error *ngIf="form.get('userId')?.invalid && form.get('userId')?.touched">
                 User ID is required
               </mat-error>
             </mat-form-field>
           </div>
 
-          <!-- Title Field (Full Width) -->
+          <!-- Title Field -->
           <div class="form-field full-width">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Post Title</mat-label>
@@ -69,9 +78,9 @@
                 formControlName="title" 
                 matInput 
                 placeholder="Enter an engaging title"
-                matTooltip="The title of your post">
+                [errorStateMatcher]="matcher">
               <mat-icon matSuffix>title</mat-icon>
-              <mat-error *ngIf="form.get('title')?.hasError('required')">
+              <mat-error *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
                 Title is required
               </mat-error>
             </mat-form-field>
@@ -86,16 +95,14 @@
                 matInput 
                 rows="6" 
                 placeholder="Write your post content here..."
-                matTooltip="The main content of your post"></textarea>
+                [errorStateMatcher]="matcher"></textarea>
               <mat-icon matSuffix>description</mat-icon>
-              <mat-error *ngIf="form.get('body')?.hasError('required')">
+              <mat-error *ngIf="form.get('body')?.invalid && form.get('body')?.touched">
                 Content is required
               </mat-error>
             </mat-form-field>
-          </div>
-
-          <!-- Character Count -->
-          <div class="form-field full-width">
+            
+            <!-- Character Counter -->
             <div class="char-counter" *ngIf="form.get('body')?.value">
               <mat-icon>text_fields</mat-icon>
               <span>{{form.get('body')?.value?.length || 0}} characters</span>
@@ -109,7 +116,7 @@
             type="button" 
             class="btn-cancel" 
             (click)="resetForm()"
-            matTooltip="Clear all fields">
+            [disabled]="isLoading">
             <mat-icon>clear</mat-icon>
             <span>Clear</span>
           </button>
@@ -117,10 +124,10 @@
           <button 
             type="submit" 
             class="btn-submit" 
-            [disabled]="form.invalid"
-            matTooltip="Create new post">
-            <mat-icon>save</mat-icon>
-            <span>Create Post</span>
+            [disabled]="form.invalid || isLoading">
+            <mat-icon *ngIf="!isLoading">save</mat-icon>
+            <mat-icon *ngIf="isLoading" class="spinner">refresh</mat-icon>
+            <span>{{ isLoading ? 'Creating...' : 'Create Post' }}</span>
           </button>
         </div>
 
@@ -132,17 +139,17 @@
       </form>
     </div>
 
-    <!-- Preview Card (Optional) -->
-    <div class="preview-card" *ngIf="form.valid && form.dirty">
+    <!-- Preview Card -->
+    <div class="preview-card" *ngIf="form.valid && (form.get('title')?.value || form.get('body')?.value)">
       <div class="preview-header">
         <mat-icon>preview</mat-icon>
         <h3>Live Preview</h3>
       </div>
       
       <div class="preview-content">
-        <div class="preview-badge">
-          <span class="badge-id">#{{form.get('id')?.value || '?'}}</span>
-          <span class="badge-user">User {{form.get('userId')?.value || '?'}}</span>
+        <div class="preview-badge" *ngIf="form.get('id')?.value || form.get('userId')?.value">
+          <span class="badge-id" *ngIf="form.get('id')?.value">#{{form.get('id')?.value}}</span>
+          <span class="badge-user" *ngIf="form.get('userId')?.value">User {{form.get('userId')?.value}}</span>
         </div>
         
         <h4 class="preview-title">{{form.get('title')?.value || 'Post Title'}}</h4>
@@ -151,25 +158,6 @@
           {{form.get('body')?.value || 'Post content will appear here...'}}
         </div>
       </div>
-      
-      <div class="preview-footer">
-        <mat-icon>check_circle</mat-icon>
-        <span>Ready to publish</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Success Message -->
-  <div class="success-message" *ngIf="showSuccessMessage" @slideInOut>
-    <div class="success-content">
-      <mat-icon>check_circle</mat-icon>
-      <div class="success-text">
-        <h4>Post Created Successfully!</h4>
-        <p>Your post has been saved</p>
-      </div>
-      <button class="close-btn" (click)="showSuccessMessage = false">
-        <mat-icon>close</mat-icon>
-      </button>
     </div>
   </div>
 </div>

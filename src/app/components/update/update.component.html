@@ -1,3 +1,4 @@
+<!-- update.component.html -->
 <div class="update-container">
   <!-- Success Message Popup -->
   <div class="success-message" *ngIf="showSuccessMessage">
@@ -8,6 +9,20 @@
         <p>The post has been modified</p>
       </div>
       <button class="close-btn" (click)="showSuccessMessage = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message Popup (Stylish) -->
+  <div class="error-message" *ngIf="showErrorMessage">
+    <div class="error-content">
+      <mat-icon>error_outline</mat-icon>
+      <div class="error-text">
+        <h4>{{errorTitle}}</h4>
+        <p>{{errorMessage}}</p>
+      </div>
+      <button class="close-btn" (click)="closeError()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -56,8 +71,14 @@
     </div>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading post data...</p>
+  </div>
+
   <!-- Form Section  -->
-  <div class="form-wrapper" *ngIf="form.get('id')?.value">
+  <div class="form-wrapper" *ngIf="form.get('id')?.value && !isLoading">
     <div class="form-card">
       <div class="form-card-header">
         <div class="header-icon">
@@ -200,7 +221,7 @@
   </div>
 
   <!-- Welcome State  -->
-  <div class="welcome-state" *ngIf="!form.get('id')?.value">
+  <div class="welcome-state" *ngIf="!form.get('id')?.value && !isLoading">
     <div class="welcome-icon-wrapper">
       <mat-icon>edit</mat-icon>
     </div>
@@ -220,5 +241,18 @@
         <span>Try ID: 3</span>
       </div>
     </div>
+  </div>
+
+  <!-- Post Not Found State -->
+  <div class="empty-state" *ngIf="searchPerformed && !form.get('id')?.value && !isLoading && searchid">
+    <div class="empty-icon-wrapper">
+      <mat-icon>search_off</mat-icon>
+    </div>
+    <h3>Post Not Found</h3>
+    <p>We couldn't find any post with ID <span class="search-term">"{{searchid}}"</span></p>
+    <button class="try-again-btn" (click)="resetSearch()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
   </div>
 </div>

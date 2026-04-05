@@ -1,3 +1,4 @@
+<!-- delete.component.html -->
 <div class="delete-container">
   <!-- Success Message Popup -->
   <div class="success-message" *ngIf="showSuccessMessage">
@@ -22,7 +23,7 @@
       </div>
       <h1 class="page-title">Delete Posts</h1>
       <p class="page-description">Remove unwanted posts with confidence</p>
-      
+
       <!-- Stats Card -->
       <div class="stats-row">
         <div class="stat-card">
@@ -36,16 +37,28 @@
     </div>
   </div>
 
-  <!-- Loading State -->
+  <!-- Loading State with Custom Spinner -->
   <div class="loading-state" *ngIf="isLoading">
-    <div class="simple-alert info-alert">
-      <mat-spinner diameter="20"></mat-spinner>
-      <span>Loading posts...</span>
+    <div class="custom-loading">
+      <div class="custom-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-icon">
+          <mat-icon>description</mat-icon>
+        </div>
+      </div>
+      <p class="loading-text">Loading posts...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
   </div>
 
   <!-- Table Section -->
-  <div class="table-container" *ngIf="!isLoading">
+  <div class="table-container" *ngIf="!isLoading && list.length > 0">
     <div class="table-responsive">
       <table class="modern-table">
         <thead>
@@ -57,53 +70,53 @@
             <th>Action</th>
           </tr>
         </thead>
-        
+
         <tbody>
           <tr *ngFor="let post of list" class="table-row">
             <td class="id-cell">
               <span class="id-badge">#{{post.id}}</span>
             </td>
-            
+
             <td class="user-cell">
               <div class="user-avatar">
                 <mat-icon>account_circle</mat-icon>
                 <span>{{post.userId}}</span>
               </div>
             </td>
-            
+
             <td class="title-cell">
               <div class="title-wrapper">
                 <span class="post-title">{{post.title}}</span>
               </div>
             </td>
-            
+
             <td class="body-cell">
               <p class="post-body">{{post.body | slice:0:60}}{{post.body.length > 60 ? '...' : ''}}</p>
             </td>
-            
-            <td class="actions-cell">
-              <button 
-                class="delete-btn" 
-                (click)="openDeleteModal(post.id)"
-                matTooltip="Delete post">
-                <mat-icon>delete</mat-icon>
-                Delete
-              </button>
-            </td>
-          </tr>
 
-          <!-- Empty State -->
-          <tr *ngIf="list.length === 0">
-            <td colspan="5" class="empty-state">
-              <div class="simple-alert warning-alert">
-                <mat-icon>info</mat-icon>
-                <span>No posts found to display</span>
-              </div>
+            <td class="actions-cell">
+              <button class="delete-btn" (click)="openDeleteModal(post)" matTooltip="Delete post">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- Empty State (No Posts Found) - Updated Colors -->
+  <div class="empty-state" *ngIf="!isLoading && list.length === 0">
+    <div class="empty-icon-wrapper">
+      <mat-icon>inbox</mat-icon>
+    </div>
+    <h3>No Posts Available</h3>
+    <p>There are no posts to display at the moment</p>
+    <button class="refresh-btn" (click)="loadPosts()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
   </div>
 </div>
 
@@ -111,13 +124,21 @@
 <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
   <div class="delete-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <mat-icon>delete</mat-icon>
+      <div class="modal-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
       <h3>Confirm Delete</h3>
     </div>
-    <p class="modal-message">Are you sure you want to delete this post? This action cannot be undone.</p>
+    <p class="modal-message">Are you sure you want to delete post #{{selectedPostId}}? This action cannot be undone.</p>
     <div class="modal-actions">
-      <button class="cancel-btn" (click)="closeModal()">Cancel</button>
-      <button class="confirm-btn" (click)="confirmDelete()">Delete</button>
+      <button class="cancel-btn" (click)="closeModal()">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+      <button class="confirm-btn" (click)="confirmDelete()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
     </div>
   </div>
 </div>

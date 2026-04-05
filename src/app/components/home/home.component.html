@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTTP App · modern dashboard</title>
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-   
-</head>
-<body>
-    <div class="home-container">
-  <!-- Hero Section with Background Image (Silver Harvest Style) -->
+<!-- home.component.html -->
+<div class="home-container">
+  <!-- Hero Section with Background Image -->
   <div class="hero-wrapper">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="hero-tag">
         <i class="fas fa-bolt"></i>
-        <span>real‑time http management</span>
+        <span>real‑time post management</span>
       </div>
       
       <h1 class="hero-title">Streamline <span>posts & data</span> with elegance</h1>
@@ -91,34 +79,74 @@
     </div>
   </div>
 
-  <!-- Video/Insight Panel -->
-  <div class="insight-panel">
-    <div class="insight-text">
-      <span class="insight-badge">
-        <i class="far fa-star"></i> featured workflow
+  <!-- Enhanced Stats Panel (Replacing Video Panel) -->
+  <div class="stats-panel">
+    <div class="stats-header">
+      <span class="stats-badge">
+        <i class="fas fa-chart-line"></i> platform insights
       </span>
-      <h2>Designed for <span class="text-primary">API‑first</span> teams</h2>
-      <p>
-        Every post operation is logged, reversible, and beautifully animated. 
-        Whether you're debugging or building a blog, this panel adapts to you.
-      </p>
-      <div class="insight-stats">
-        <span class="insight-stat"><i class="far fa-clock"></i> instant sync</span>
-        <span class="insight-stat"><i class="far fa-keyboard"></i> shortcuts</span>
+      <h2>Real-time <span class="text-primary">post analytics</span></h2>
+      <p>Monitor your post management activities with live statistics and performance metrics.</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <mat-icon>create</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">156</span>
+          <span class="stat-name">Posts Created</span>
+          <span class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +12% this week
+          </span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <mat-icon>edit</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">89</span>
+          <span class="stat-name">Updates Made</span>
+          <span class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +8% this week
+          </span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <mat-icon>delete_outline</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">34</span>
+          <span class="stat-name">Posts Removed</span>
+          <span class="stat-trend neutral">
+            <i class="fas fa-minus"></i> stable
+          </span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <mat-icon>visibility</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">2.4k</span>
+          <span class="stat-name">Total Views</span>
+          <span class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +23% this week
+          </span>
+        </div>
       </div>
     </div>
     
-    <div class="insight-media" (click)="playVideo()">
-      <div class="play-mini" *ngIf="!isVideoPlaying">
-        <i class="fas fa-play"></i>
-      </div>
-      <iframe 
-        *ngIf="isVideoPlaying" 
-        [src]="videoUrl" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
+    <div class="stats-footer">
+      <button class="btn-outline-stats" (click)="navigateTo('/all')">
+        View full analytics <i class="fas fa-arrow-right"></i>
+      </button>
     </div>
   </div>
 
@@ -135,9 +163,46 @@
     </span>
   </div>
 
+  <!-- Recent Activity Section -->
+  <div class="recent-activity">
+    <h3>
+      <mat-icon>history</mat-icon>
+      Recent Activity
+    </h3>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon">
+          <mat-icon>add_circle</mat-icon>
+        </div>
+        <div class="activity-details">
+          <p><strong>New post created</strong> - "Getting Started with Angular"</p>
+          <span class="activity-time">2 minutes ago</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <mat-icon>edit</mat-icon>
+        </div>
+        <div class="activity-details">
+          <p><strong>Post updated</strong> - "HTTP Client Best Practices"</p>
+          <span class="activity-time">1 hour ago</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <mat-icon>search</mat-icon>
+        </div>
+        <div class="activity-details">
+          <p><strong>Search performed</strong> - "Angular 18 features"</p>
+          <span class="activity-time">3 hours ago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Mini Footer -->
   <div class="footer-mini">
-    <span>© 2025 HTTP App · </span>
+    <span>© 2025 PostHub · </span>
     <a href="#">privacy</a> · <a href="#">terms</a> · 
     <span>crafted with <i class="far fa-heart" style="color:#96c181;"></i> for devs</span>
     <span style="display:block; margin-top: 1rem; font-size:0.8rem;">
@@ -145,5 +210,3 @@
     </span>
   </div>
 </div>
-</body>
-</html>

@@ -1,18 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Post, PostService } from '../services/post.service';
+import { Subscription } from 'rxjs';
 
+export class CustomErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null): boolean {
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+}
 
 @Component({
   selector: 'app-new',
   templateUrl: './new.component.html',
   styleUrls: ['./new.component.scss']
 })
-export class NewComponent implements OnInit {
-  list: Post | null = null;
-  showSuccessMessage = false; 
+export class NewComponent implements OnInit, OnDestroy {
+  showSuccessMessage = false;
+  isLoading = false;
+  private subscription: Subscription | null = null;
+  private successTimeout: any = null;
+  matcher = new CustomErrorStateMatcher();
 
   form = new FormGroup({
     id: new FormControl('', [
@@ -26,45 +35,77 @@ export class NewComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private _snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar
+  ) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
-  createData() {
-    if (this.form.valid) {
-      const formValue = this.form.value as { userId: string; title: string; body: string };
-      const { userId, title, body } = formValue;
-      
-      this.postService.create(Number(userId), title, body).subscribe(
-        data => {
-          console.log(data);
-          this.list = data;
-
-          // Show the beautiful success popup
-          this.showSuccessMessage = true;
-          setTimeout(() => {
-            this.showSuccessMessage = false;
-          }, 5000);
-
-          this.form.reset();
-        },
-        error => {
-          console.error('Error creating post', error);
-          // Keep only error snackbar (or remove if you want consistent UI)
-          this._snackBar.open('Failed to create post!', 'Close', {
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
-        }
-      );
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    // Clear timeout to prevent memory leaks
+    if (this.successTimeout) {
+      clearTimeout(this.successTimeout);
     }
   }
 
-  // UI helper method
+  async createData() {
+  // Prevent multiple submissions
+  if (this.form.invalid || this.isLoading) {
+    // Mark all fields as touched to show validation errors
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      control?.markAsTouched();
+    });
+    return;
+  }
+
+  this.isLoading = true;
+
+  const formValue = this.form.value;
+  const post: Post = {
+    id: Number(formValue.id),
+    userId: Number(formValue.userId),
+    title: formValue.title || '',
+    body: formValue.body || ''
+  };
+
+  try {
+    await this.postService.createDataFirestore(post);
+    
+    // Clear any existing timeout to prevent duplicate hiding
+    if (this.successTimeout) {
+      clearTimeout(this.successTimeout);
+    }
+    
+    // Show single success message
+    this.showSuccessMessage = true;
+    
+    // Reset form
+    this.form.reset();
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    
+    // Hide success message after 3 seconds
+    this.successTimeout = setTimeout(() => {
+      this.showSuccessMessage = false;
+      this.successTimeout = null;
+    }, 3000);
+    
+    // REMOVED: snackbar code is gone now
+    
+  } catch (error) {
+    console.error('Error creating post', error);
+    // REMOVED: error snackbar code is gone now
+  } finally {
+    this.isLoading = false;
+  }
+}
+
   resetForm() {
     this.form.reset();
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
   }
 }

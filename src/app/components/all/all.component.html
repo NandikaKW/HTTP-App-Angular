@@ -8,7 +8,7 @@
       </div>
       <h1 class="page-title">All Posts</h1>
       <p class="page-description">Browse and manage all your posts in one place</p>
-      
+
       <!-- Stats Cards -->
       <div class="stats-row">
         <div class="stat-card">
@@ -40,21 +40,22 @@
   <div class="filter-bar">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input 
-        type="text" 
-        placeholder="Search posts by title or body..." 
-        (input)="onSearch($event)"
-        class="search-input">
+      <input type="text" placeholder="Search posts by title or body..." (input)="onSearch($event)" class="search-input">
     </div>
-    
+
     <div class="filter-actions">
-      <button mat-button class="btn-outline-modern" (click)="refreshPosts()">
+      <button class="btn-refresh" (click)="refreshPosts()">
         <mat-icon>refresh</mat-icon>
         <span>Refresh</span>
       </button>
-      <button mat-raised-button class="btn-primary-modern" routerLink="/new">
-        <mat-icon>add_circle</mat-icon>
-        <span>New Post</span>
+
+      <button class="btn-create-post" routerLink="/new">
+        <div class="btn-glow"></div>
+        <div class="btn-content">
+          <mat-icon class="btn-icon">add</mat-icon>
+          <span class="btn-text">Create New Post</span>
+          <mat-icon class="btn-arrow">arrow_forward</mat-icon>
+        </div>
       </button>
     </div>
   </div>
@@ -71,12 +72,9 @@
       <mat-icon>sort</mat-icon>
       <span>Sort by:</span>
     </div>
-    
+
     <div class="sort-buttons">
-      <button 
-        class="sort-btn" 
-        [class.active]="sortField === 'id'"
-        (click)="sortData('id')">
+      <button class="sort-btn" [class.active]="sortField === 'id'" (click)="sortData('id')">
         <span>ID</span>
         <mat-icon *ngIf="sortField === 'id'">
           {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
@@ -84,10 +82,7 @@
         <mat-icon *ngIf="sortField !== 'id'">unfold_more</mat-icon>
       </button>
 
-      <button 
-        class="sort-btn" 
-        [class.active]="sortField === 'title'"
-        (click)="sortData('title')">
+      <button class="sort-btn" [class.active]="sortField === 'title'" (click)="sortData('title')">
         <span>Title</span>
         <mat-icon *ngIf="sortField === 'title'">
           {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
@@ -95,10 +90,7 @@
         <mat-icon *ngIf="sortField !== 'title'">unfold_more</mat-icon>
       </button>
 
-      <button 
-        class="sort-btn" 
-        [class.active]="sortField === 'userId'"
-        (click)="sortData('userId')">
+      <button class="sort-btn" [class.active]="sortField === 'userId'" (click)="sortData('userId')">
         <span>User ID</span>
         <mat-icon *ngIf="sortField === 'userId'">
           {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
@@ -145,44 +137,48 @@
             <th>Actions</th>
           </tr>
         </thead>
-        
+
         <tbody>
           <tr *ngFor="let post of paginatedList; let i = index" class="table-row">
             <td class="id-cell">
               <span class="id-badge">#{{post.id}}</span>
             </td>
-            
+
             <td class="user-cell">
               <div class="user-avatar">
                 <mat-icon>account_circle</mat-icon>
                 <span>{{post.userId}}</span>
               </div>
             </td>
-            
+
             <td class="title-cell">
               <div class="title-wrapper">
                 <span class="post-title">{{post.title}}</span>
                 <span class="post-excerpt">{{post.body | slice:0:30}}...</span>
               </div>
             </td>
-            
+
             <td class="body-cell">
               <p class="post-body">{{post.body | slice:0:80}}{{post.body.length > 80 ? '...' : ''}}</p>
             </td>
-            
+
+            <!-- In the actions cell section, update the edit and delete buttons -->
             <td class="actions-cell">
               <div class="action-buttons">
-                <button mat-icon-button class="action-btn view-btn" 
-                        [matTooltip]="'View post #' + post.id"
-                        (click)="openPostDetails(post)">
+                <button mat-icon-button class="action-btn view-btn" [matTooltip]="'View post #' + post.id"
+                  (click)="openPostDetails(post)">
                   <mat-icon>visibility</mat-icon>
                 </button>
-                
-                <button mat-icon-button class="action-btn edit-btn" [matTooltip]="'Edit post'" routerLink="/update" [queryParams]="{id: post.id}">
+
+                <!-- Update edit button to use docId instead of id -->
+                <button mat-icon-button class="action-btn edit-btn" [matTooltip]="'Edit post'" routerLink="/update"
+                  [queryParams]="{docId: post.docId, id: post.id}">
                   <mat-icon>edit</mat-icon>
                 </button>
-                
-                <button mat-icon-button class="action-btn delete-btn" [matTooltip]="'Delete post'" routerLink="/delete" [queryParams]="{id: post.id}">
+
+                <!-- Update delete button to use docId instead of id -->
+                <button mat-icon-button class="action-btn delete-btn" [matTooltip]="'Delete post'" routerLink="/delete"
+                  [queryParams]="{docId: post.docId, id: post.id}">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
@@ -214,14 +210,14 @@
       <div class="pagination-info">
         Showing {{paginatedList.length}} of {{filteredList.length}} posts
       </div>
-      
+
       <div class="pagination-controls">
         <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
           <mat-icon>chevron_left</mat-icon>
         </button>
-        
+
         <span class="page-indicator">Page {{currentPage}} of {{totalPages}}</span>
-        
+
         <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
           <mat-icon>chevron_right</mat-icon>
         </button>
@@ -235,7 +231,7 @@
       <button class="close-btn" (click)="closePostDetails()">
         <mat-icon>close</mat-icon>
       </button>
-      
+
       <!-- Header Section -->
       <div class="card-header">
         <div class="header-badge">
@@ -244,7 +240,7 @@
         </div>
         <h2 class="post-title-full">{{selectedPost.title}}</h2>
       </div>
-      
+
       <!-- Scrollable Content Area -->
       <div class="card-content scrollable-content">
         <div class="detail-grid">
@@ -255,7 +251,7 @@
             </span>
             <span class="detail-value id-value">#{{selectedPost.id}}</span>
           </div>
-          
+
           <div class="detail-item">
             <span class="detail-label">
               <mat-icon>person</mat-icon>
@@ -264,7 +260,7 @@
             <span class="detail-value">{{selectedPost.userId}}</span>
           </div>
         </div>
-        
+
         <div class="content-section">
           <span class="detail-label">
             <mat-icon>description</mat-icon>
@@ -274,7 +270,7 @@
             <p class="post-body-full">{{selectedPost.body}}</p>
           </div>
         </div>
-        
+
         <div class="card-stats">
           <div class="stat-chip">
             <mat-icon>access_time</mat-icon>
@@ -290,7 +286,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Footer Actions -->
       <div class="card-footer">
         <div class="card-actions">
@@ -298,10 +294,8 @@
             <mat-icon>close</mat-icon>
             Close
           </button>
-          <button mat-raised-button class="btn-primary-modern" 
-                  [routerLink]="['/update']" 
-                  [queryParams]="{id: selectedPost.id}"
-                  (click)="closePostDetails()">
+          <button mat-raised-button class="btn-primary-modern" [routerLink]="['/update']"
+            [queryParams]="{id: selectedPost.id}" (click)="closePostDetails()">
             <mat-icon>edit</mat-icon>
             Edit Post
           </button>

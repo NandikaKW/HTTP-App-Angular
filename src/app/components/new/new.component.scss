@@ -51,6 +51,40 @@
     }
   }
 
+  // Success Toast - Single message only
+  .success-toast {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+
+    .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 60px;
+      box-shadow: 0 15px 30px -8px rgba(76, 175, 80, 0.3);
+      border-left: 4px solid #6e9f58;
+
+      mat-icon {
+        color: #6e9f58;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .toast-text {
+        strong {
+          color: #1a3a2a;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
   // Form Wrapper
   .form-wrapper {
     display: grid;
@@ -171,10 +205,15 @@
             height: 22px;
           }
 
-          &:hover {
+          &:hover:not(:disabled) {
             border-color: #d32f2f;
             color: #d32f2f;
             background: #ffebee;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
           }
         }
 
@@ -197,6 +236,10 @@
             font-size: 22px;
             width: 22px;
             height: 22px;
+          }
+
+          .spinner {
+            animation: spin 0.6s linear infinite;
           }
 
           &:hover:not(:disabled) {
@@ -310,91 +353,25 @@
           border: 1px solid rgba(110, 159, 88, 0.1);
         }
       }
-
-      .preview-footer {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(110, 159, 88, 0.1);
-        color: #6e9f58;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-
-        span {
-          font-size: 0.9rem;
-          font-weight: 500;
-        }
-      }
     }
   }
+}
 
-  // Success Message
-  .success-message {
-    position: fixed;
-    top: 100px;
-    right: 2rem;
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
+// Override Material form field focus color to match green theme
+::ng-deep .new-container .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: #6e9f58 !important;
+}
 
-    .success-content {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: white;
-      padding: 1rem 1.5rem;
-      border-radius: 60px;
-      box-shadow: 0 15px 30px -8px rgba(76, 175, 80, 0.3);
-      border: 1px solid #4caf50;
+::ng-deep .new-container .mat-form-field-appearance-outline.mat-focused .mat-form-field-label {
+  color: #6e9f58 !important;
+}
 
-      mat-icon {
-        color: #4caf50;
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
-      }
+::ng-deep .new-container .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(110, 159, 88, 0.3);
+}
 
-      .success-text {
-        h4 {
-          color: #1a3a2a;
-          font-weight: 600;
-          margin: 0;
-        }
-
-        p {
-          color: #5f6b66;
-          font-size: 0.85rem;
-          margin: 0;
-        }
-      }
-
-      .close-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #5f6b66;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        mat-icon {
-          color: #5f6b66;
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-
-        &:hover mat-icon {
-          color: #d32f2f;
-        }
-      }
-    }
-  }
+::ng-deep .new-container .mat-form-field-appearance-outline .mat-form-field-outline-gap {
+  border-top-color: rgba(110, 159, 88, 0.3) !important;
 }
 
 // Animations
@@ -406,6 +383,15 @@
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -449,11 +435,11 @@
       }
     }
 
-    .success-message {
+    .success-toast {
       left: 1rem;
       right: 1rem;
       
-      .success-content {
+      .toast-content {
         flex-wrap: wrap;
         justify-content: center;
         text-align: center;
